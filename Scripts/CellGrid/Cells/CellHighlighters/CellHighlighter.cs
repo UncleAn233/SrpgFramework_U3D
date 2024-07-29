@@ -2,11 +2,15 @@ using UnityEngine;
 
 namespace SrpgFramework.CellGrid.Cells
 {
-    public class CellHighlighter :MonoBehaviour
+    public class CellHighlighter : MonoBehaviour
     {
-        public CellHighlightTag Tag;
+        public static string Tag_DeHighlight = "";
+        public static string Tag_Cursor = "cursor";
+        public static string Tag_Selectable = "selectable";
+        public static string Tag_Effect = "effect";
 
         private SpriteRenderer spriteRenderer;
+        public string Tag;
 
         private void Awake()
         {
@@ -16,17 +20,12 @@ namespace SrpgFramework.CellGrid.Cells
             spriteRenderer = this.GetComponent<SpriteRenderer>();
         }
 
-        public void Apply(CellHighlightTag highlightTag, params object[] obj)
+        public void Apply(string highlightTag)
         {
-            if (highlightTag == Tag)
+            if (highlightTag == Tag.ToLower()) 
                 spriteRenderer.enabled = true;
             else
                 spriteRenderer.enabled = false;
         }
-    }
-
-    public enum CellHighlightTag
-    {
-        Select, Selectable, Effect, Path, DeHighlight
     }
 }

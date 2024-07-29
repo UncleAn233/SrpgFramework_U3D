@@ -13,6 +13,7 @@ namespace SrpgFramework.Units
     {
         private Unit unit;
         public Dictionary<Unit, float> UnitScoreDict { get; private set; } = new();
+        public Dictionary<Cell, float> CellScoreDict { get; private set; } = new();
 
         public HashSet<Ability> MoveBrains { get; private set; } = new();
         public HashSet<Ability> ActionBrains { get; private set; } = new();
@@ -47,10 +48,31 @@ namespace SrpgFramework.Units
             }
         }
 
+        public void EvaluateCells()
+        {
+            CellEvaluators.Clear();
+            foreach(var c in GameManager.CellGridMgr.Cells)
+            {
+                if (CellEvaluators.Any())
+                {
+                    CellScoreDict.Add(c, CellEvaluators.Sum(evaluator =>
+                    {
+                        evaluator.PreCalculate(unit);
+                        return evaluator.Evaluate(c, unit) * evaluator.Weight;
+                    }));
+                }
+                else
+                {
+                    CellScoreDict.Add(c, 0);
+                }
+            }
+        }
+
         //ÊµÐÐ
         public IEnumerator Execute()
         {
             EvaluateUnits();
+            EvaluateCells();
             var brainList = MoveBrains.Concat(ActionBrains).ToHashSet();
             var brains = brainList.Where(brain => brain.ShouldExecute(unit, unit.Cell));
 

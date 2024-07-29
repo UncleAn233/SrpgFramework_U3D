@@ -1,7 +1,6 @@
 using SrpgFramework.Players;
 using SrpgFramework.Units;
 using System;
-using UnityEngine;
 using UnityEngine.EventSystems;
 
 namespace SrpgFramework.CellGrid.Cells
@@ -16,8 +15,6 @@ namespace SrpgFramework.CellGrid.Cells
         public Action<Unit> OnUnitClicked;
         public Action<Unit> OnUnitHighlighted;
         public Action<Unit> OnUnitDeHighlighted;
-        public Action<Player> OnTurnStart;
-        public Action<Player> OnTurnEnd;
 
         public virtual void OnMouseEnter()
         {
@@ -53,17 +50,21 @@ namespace SrpgFramework.CellGrid.Cells
         #endregion
 
         #region ∏ﬂ¡¡        
-        public Action<CellHighlightTag, object[]> OnHighlight;
+        public Action<string> OnHighlight;
 
-        public void Highlight(CellHighlightTag highlightTag, params object[] obj)
+        public void Highlight(string highlighter)
         {
-            OnHighlight?.Invoke(highlightTag, obj);
+            OnHighlight?.Invoke(highlighter);
         }
 
         public void DeHighlight()
         {
-            OnHighlight?.Invoke(CellHighlightTag.DeHighlight, null);
+            OnHighlight?.Invoke("");
         }
         #endregion
+
+        public Action<Unit> OnUnitEnter;
+        public Action<Player> OnTurnStart;
+        public Action<Player> OnTurnEnd;
     }
 }

@@ -5,9 +5,9 @@ namespace SrpgFramework.Units
 {
     public partial class Unit
     {
-        public void Highlight(CellHighlightTag highlightTag, params object[] objs)
+        public void Highlight(string highlighter)
         {
-            this.Cell.Highlight(highlightTag, objs);
+            this.Cell.Highlight(highlighter);
         }
 
         public void DeHighlight()

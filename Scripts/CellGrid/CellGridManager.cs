@@ -6,7 +6,7 @@ using UnityEngine;
 namespace SrpgFramework.CellGrid {
     public class CellGridManager : MonoBehaviour
     {
-        public Dictionary<Vector2Int, Cell> Cells { get; private set; } = new();
+        public HashSet<Cell> Cells { get; private set; } = new();
 
         #region CellGridState
         public ICellGridState CurrentGridState { get; private set; }
@@ -59,7 +59,7 @@ namespace SrpgFramework.CellGrid {
 
         public void RegisterCell(Cell cell)
         {
-            if(Cells.TryAdd(cell.Coord, cell))
+            if(Cells.Add(cell))
             {
                 cell.OnCellClicked += OnCellClicked;
                 cell.OnCellHighlighted += OnCellHighlighted;
@@ -72,7 +72,7 @@ namespace SrpgFramework.CellGrid {
 
         public void UnRegisterCell(Cell cell)
         {
-            if (Cells.Remove(cell.Coord))
+            if (Cells.Remove(cell))
             {
                 cell.OnCellClicked -= OnCellClicked;
                 cell.OnCellHighlighted -= OnCellHighlighted;

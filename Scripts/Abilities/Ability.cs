@@ -37,14 +37,15 @@ namespace SrpgFramework.Abilities
             yield return Execute(unit, () => { }, () => { unit.Ai.EvaluateUnits(); });
         }
 
-        public void Enter(Unit unit = null) { }
-        public void Exit() { }
-        public void OnCellClicked(Cell cell) { }
-        public void OnCellDehighlighted(Cell cell) { }
-        public void OnCellHighlighted(Cell cell) { }
-        public void OnUnitClicked(Unit unit) { }
-        public void OnUnitDehighlighted(Unit unit) { }
-        public void OnUnitHighlighted(Unit unit) { }
+        public virtual void Enter(Unit unit = null) { }
+        public virtual void Exit() { }
+        public virtual void OnCellClicked(Cell cell) { }
+        public virtual void OnCellDehighlighted(Cell cell) { }
+        public virtual void OnCellHighlighted(Cell cell) { }
+        public virtual void OnUnitClicked(Unit unit) { }
+        public virtual void OnUnitDehighlighted(Unit unit) { }
+        public virtual void OnUnitHighlighted(Unit unit) { }
+        public virtual bool CanPerform(Unit unit) { return true; }
 
         public virtual bool ShouldExecute(Unit unit, Cell cell) { return false; }
         public virtual float Evaluate(Unit unit, Cell cell) { return -1; }

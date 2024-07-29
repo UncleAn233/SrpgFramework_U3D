@@ -1,8 +1,7 @@
-using SrpgFramework.CellGrid.Cells;
-using SrpgFramework.Global;
-using SrpgFramework.Players;
+﻿using SrpgFramework.CellGrid.Cells;
 using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace SrpgFramework.Units
@@ -21,11 +20,6 @@ namespace SrpgFramework.Units
                 }
             }
         }
-        public HashSet<string> Tags;
-        public UnitType UnitType;
-
-        public int PlayerNumber;
-        public Player Player => GameManager.PlayerMgr.GetPlayer(PlayerNumber);
 
         [SerializeField]
         [HideInInspector]
@@ -47,10 +41,19 @@ namespace SrpgFramework.Units
         public Dictionary<string, int> Points { get; private set; }
         private Dictionary<string, Action<object[]>> events { get; set; }
         
+        public MoveUnit Move { get; internal set; }
+        public AiUnit Ai { get; internal set; }
+
         private void Awake()
         {
             Points = new();
             events = new();
+
+            if(UnitType == UnitType.PC || UnitType == UnitType.NPC)
+            {
+                Move = this.AddComponent<MoveUnit>();
+                Ai = this.AddComponent<AiUnit>();
+            }
         }
 
         private void Start()

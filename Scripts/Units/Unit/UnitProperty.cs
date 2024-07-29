@@ -8,6 +8,11 @@ namespace SrpgFramework.Units
 {
     public partial class Unit
     {
+        public HashSet<string> Tags;
+        public UnitType UnitType { get; private set; }
+        public int PlayerNumber;
+        public Player Player => GameManager.PlayerMgr.GetPlayer(PlayerNumber);
+
         public int Lv { get; set; }    //µÈ¼¶
         public int Exp { get; set; }     //¾­Ñé
 
@@ -29,7 +34,7 @@ namespace SrpgFramework.Units
         public int Def { get; set; }    //·ÀÓù
         public int Mdef { get; set; }   //Ä§¿¹
         public int Dodge { get; set; }   //ÉÁ±Ü
-        public int Mov { get; set; }    //ÒÆ¶¯
+        public int Mov { get; set; } = 3;   //ÒÆ¶¯
         public int Hate { get; set; } //³ðºÞ
         
         public float HpPercent { get => (float)hp / MaxHp; }

@@ -2,7 +2,6 @@ using SrpgFramework.CellGrid.Cells;
 using SrpgFramework.Units;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 
 namespace SrpgFramework.CellGrid.AStar
 {
@@ -27,9 +26,9 @@ namespace SrpgFramework.CellGrid.AStar
                 {
                     var path = new List<Cell>();
                     var currentPathTile = current;
-                    while (currentPathTile != start)
+                    while (currentPathTile != start)    //路径不包含出发点
                     {
-                        path.Add(currentPathTile);
+                        path.Insert(0, currentPathTile);
                         currentPathTile = nodeDict[currentPathTile].Connection;
                     }
                     return path;

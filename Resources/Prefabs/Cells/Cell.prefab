@@ -99,7 +99,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 279afa236bdc59143bef260c0888759b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Tag: 1
+  Tag: Selectable
 --- !u!1 &1256943866686950950
 GameObject:
   m_ObjectHideFlags: 0
@@ -230,7 +230,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 279afa236bdc59143bef260c0888759b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Tag: 0
+  Tag: Cursor
 --- !u!1 &2806648857175996369
 GameObject:
   m_ObjectHideFlags: 0
@@ -482,4 +482,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 279afa236bdc59143bef260c0888759b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Tag: 2
+  Tag: Effect

@@ -1,3 +1,4 @@
+using SrpgFramework.Abilities;
 using SrpgFramework.CellGrid.Cells;
 using SrpgFramework.Units;
 
@@ -6,6 +7,8 @@ namespace SrpgFramework.CellGrid
     public class GridStateIdle : ICellGridState
     {
         private CellGridManager _mgr;
+
+        private MoveAbility moveAbility = new();
 
         public GridStateIdle(CellGridManager mgr)
         {
@@ -23,12 +26,13 @@ namespace SrpgFramework.CellGrid
 
         public void OnUnitClicked(Unit unit)
         {
-            _mgr.ToState(_mgr.SelectUnitState, unit);
+            //_mgr.ToState(_mgr.SelectUnitState, unit);
+            _mgr.ToState(moveAbility, unit);
         }
 
         public void OnUnitHighlighted(Unit unit)
         {
-            unit.Highlight(CellHighlightTag.Select);
+            unit.Highlight("");
         }
 
         public void OnUnitDehighlighted(Unit unit)
@@ -43,7 +47,7 @@ namespace SrpgFramework.CellGrid
 
         public void OnCellHighlighted(Cell cell)
         {
-            cell.Highlight(CellHighlightTag.Select);
+            cell.Highlight(CellHighlighter.Tag_Cursor);
         }
 
 

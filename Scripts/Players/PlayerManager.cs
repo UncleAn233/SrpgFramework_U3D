@@ -1,4 +1,4 @@
-using SrpgFramework.Global;
+锘縰sing SrpgFramework.Global;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,8 +11,8 @@ namespace SrpgFramework.Players
         public Player CurrentPlayer => Players[current];
         private int current;
 
-        public Action<Player> OnTurnStart;
-        public Action<Player> OnTurnEnd;
+        public Action<int> OnTurnStart;
+        public Action<int> OnTurnEnd;
 
         private void Awake()
         {
@@ -54,9 +54,9 @@ namespace SrpgFramework.Players
         {
             GameManager.CellGridMgr.ToBlockInputState();
 
-            OnTurnEnd?.Invoke(CurrentPlayer);
+            OnTurnEnd?.Invoke(current);
             NextPlayer();
-            OnTurnStart?.Invoke(CurrentPlayer);
+            OnTurnStart?.Invoke(current);
             CurrentPlayer.Play();
 
             Debug.Log(string.Format("Player {0} turn", CurrentPlayer.PlayerNumber));
@@ -72,17 +72,17 @@ namespace SrpgFramework.Players
                 player.Alignment = alignment;
             };
             var playerParent = new GameObject("Players");
-            regist(playerParent.AddComponent<HumanPlayer>(), 0, PlayerAlignment.Friend);   //玩家
-            regist(playerParent.AddComponent<AiPlayer>(), 1, PlayerAlignment.Friend);   //友军
-            regist(playerParent.AddComponent<AiPlayer>(), 2, PlayerAlignment.Enemy);  //敌人
-            regist(playerParent.AddComponent<AiPlayer>(), 3, PlayerAlignment.Third); //中立
+            regist(playerParent.AddComponent<HumanPlayer>(), 0, PlayerAlignment.Friend);   //鐜╁
+            regist(playerParent.AddComponent<AiPlayer>(), 1, PlayerAlignment.Friend);   //鍙嬪啗
+            regist(playerParent.AddComponent<AiPlayer>(), 2, PlayerAlignment.Enemy);  //鏁屼汉
+            regist(playerParent.AddComponent<AiPlayer>(), 3, PlayerAlignment.Third); //涓珛
             Players.Capacity = Players.Count;
         }
 
         void GameStart()
         {
             current = 0;
-            OnTurnStart?.Invoke(CurrentPlayer);
+            OnTurnStart?.Invoke(current);
             CurrentPlayer.Play();
         }
 

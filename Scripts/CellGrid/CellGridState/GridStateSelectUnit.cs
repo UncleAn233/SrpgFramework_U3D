@@ -3,7 +3,6 @@ using SrpgFramework.Global;
 using SrpgFramework.Units;
 using SrpgFramework.CellGrid.AStar;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace SrpgFramework.CellGrid
 {
@@ -25,13 +24,17 @@ namespace SrpgFramework.CellGrid
             moveableArea = AStart.GetMoveableArea(unit.Cell, unit.Move, 9);
             foreach(var c in moveableArea)
             {
-                c.Highlight(CellHighlightTag.Selectable);
+                c.Highlight(CellHighlighter.Tag_Selectable);
             }
         }
 
         public void Exit()
         {
             _unit = null;
+            foreach(var c in moveableArea)
+            {
+                c.DeHighlight();
+            }
         }
 
         public void OnCellClicked(Cell cell)
@@ -45,11 +48,11 @@ namespace SrpgFramework.CellGrid
             {
                 path = AStart.GetPath(_unit.Cell, cell, _unit.Move);
                 foreach (var c in path)
-                    c.Highlight(CellHighlightTag.Effect);
+                    c.Highlight(CellHighlighter.Tag_Effect);
             }
             else
             {
-                cell.Highlight(CellHighlightTag.Select);
+                cell.Highlight(CellHighlighter.Tag_Cursor);
             }
         }
 
@@ -58,7 +61,7 @@ namespace SrpgFramework.CellGrid
             if (moveableArea.Contains(cell))
             {
                 foreach (var c in path)
-                    c.Highlight(CellHighlightTag.Selectable);
+                    c.Highlight(CellHighlighter.Tag_Selectable);
             }
             else
             {
@@ -77,7 +80,7 @@ namespace SrpgFramework.CellGrid
 
         public void OnUnitHighlighted(Unit unit)
         {
-            unit.Highlight(CellHighlightTag.Select);
+            unit.Highlight(CellHighlighter.Tag_Cursor);
         }
     }
 }

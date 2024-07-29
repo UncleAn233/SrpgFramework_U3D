@@ -18,5 +18,10 @@ namespace SrpgFramework.Units
         {
             return Units.Where(u => u.Player.IsEnemy(player)).ToHashSet();
         }
+
+        public void NewUnit()
+        {
+
+        }
     }
 }

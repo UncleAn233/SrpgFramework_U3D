@@ -6181,7 +6181,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1473254551942527970, guid: 6ce286025701be446a870dee1c69ddcb, type: 3}
       propertyPath: m_Name
-      value: Highlighter
+      value: Cursor
       objectReference: {fileID: 0}
     - target: {fileID: 2806648857175996369, guid: 6ce286025701be446a870dee1c69ddcb, type: 3}
       propertyPath: m_Name

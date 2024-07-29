@@ -1,5 +1,4 @@
-using SrpgFramework.CellGrid.AStar;
-using SrpgFramework.Global;
+ï»¿using SrpgFramework.Global;
 using SrpgFramework.Units;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +7,7 @@ using UnityEngine;
 namespace SrpgFramework.CellGrid.Cells
 {
     /// <summary>
-    /// Õ½Æå¸ñ×ÓµÄ»ù±¾Àà Ä¬ÈÏÎªÕı·½ĞÎ
+    /// æˆ˜æ£‹æ ¼å­çš„åŸºæœ¬ç±» é»˜è®¤ä¸ºæ­£æ–¹å½¢
     /// </summary>
     public partial class Cell : MonoBehaviour
     {
@@ -16,33 +15,48 @@ namespace SrpgFramework.CellGrid.Cells
         [SerializeField]
         private Vector2Int _coord;
         /// <summary>
-        /// ×ø±ê
+        /// åæ ‡
         /// </summary>
         public Vector2Int Coord { get { return _coord; } set { _coord = value; } }
 
         /// <summary>
-        /// µØÃæÀàĞÍ£¬Ö÷ÒªÓÃÓÚµ¥Î»ÒÆ¶¯Ê±ÅĞ¶¨¸Ã¸ñ×ÓÊÇ·ñ¿ÉÍ¨ĞĞ
+        /// åœ°é¢ç±»å‹ï¼Œä¸»è¦ç”¨äºå•ä½ç§»åŠ¨æ—¶åˆ¤å®šè¯¥æ ¼å­æ˜¯å¦å¯é€šè¡Œ
         /// </summary>
         public GroundType GroundType { get; set; } = GroundType.Ground;
 
         /// <summary>
-        /// ¸Ã¸ñ×ÓÉÏµÄµ¥Î»
+        /// è¯¥æ ¼å­ä¸Šçš„å•ä½
         /// </summary>
         public Unit Unit { get; set; }
 
         /// <summary>
-        /// ¸Ã¸ñ×ÓÊÇ·ñÓĞUnit
+        /// è¯¥æ ¼å­æ˜¯å¦æœ‰Unit
         /// </summary>
         public bool IsTaken => Unit is not null;
 
         /// <summary>
-        /// ¼ÆËãA*Ñ°Â·Ê±µÄÒÆ¶¯¿ªÏú Ä¬ÈÏÎª1
+        /// æ ¼å­äº‹ä»¶ï¼Œç”¨äºå¤„ç†ä¾‹å¦‚é™·é˜±ç­‰æƒ…å†µ
+        /// </summary>
+        private ICellTrigger _cellTrigger;
+        public ICellTrigger CellTriger
+        {
+            get { return _cellTrigger; }
+            set
+            {
+                _cellTrigger?.Unregister(this);
+                _cellTrigger = value;
+                _cellTrigger?.Register(this);
+            }
+        }
+
+        /// <summary>
+        /// è®¡ç®—A*å¯»è·¯æ—¶çš„ç§»åŠ¨å¼€é”€ é»˜è®¤ä¸º1
         /// </summary>
         public int MoveCost { get; set; } = 1;
 
         private HashSet<Cell> _neighbors;
         /// <summary>
-        /// ÖÜ±ß¸ñ×Ó ÓÃÓÚÑ°Â·¼ÆËã
+        /// å‘¨è¾¹æ ¼å­ ç”¨äºå¯»è·¯è®¡ç®—
         /// </summary>
         public HashSet<Cell> Neighbors
         {
@@ -50,7 +64,7 @@ namespace SrpgFramework.CellGrid.Cells
             {
                 if (_neighbors is null)
                 {
-                    _neighbors = GameManager.CellGridMgr.Cells.Values.Where(c => GetDistance(c) == 1).ToHashSet();
+                    _neighbors = GameManager.CellGridMgr.Cells.Where(c => GetDistance(c) == 1).ToHashSet();
                 }
                 return _neighbors;
             }
@@ -67,7 +81,7 @@ namespace SrpgFramework.CellGrid.Cells
         }
 
         /// <summary>
-        /// ¼ÆËã×ø±ê¼äµÄÂü¹ş¶Ù¾àÀë
+        /// è®¡ç®—åæ ‡é—´çš„æ›¼å“ˆé¡¿è·ç¦»
         /// </summary>
         public int GetDistance(Vector2Int other)
         {
@@ -75,7 +89,7 @@ namespace SrpgFramework.CellGrid.Cells
             return Mathf.Abs(vec.x) + Mathf.Abs(vec.y);
         }
         /// <summary>
-        /// ÓëÆäËü¸ñ×ÓµÄÂü¹ş¶Ù¾àÀë
+        /// ä¸å…¶å®ƒæ ¼å­çš„æ›¼å“ˆé¡¿è·ç¦»
         /// </summary>
         public int GetDistance(Cell cell)
         {
@@ -83,11 +97,11 @@ namespace SrpgFramework.CellGrid.Cells
         }
 
         /// <summary>
-        /// ÒÔ¸Ã¸ñ×ÓÎªÖĞĞÄorÆğµã£¬»ñÈ¡ÖÜ±ß¸ñ×Ó
+        /// ä»¥è¯¥æ ¼å­ä¸ºä¸­å¿ƒorèµ·ç‚¹ï¼Œè·å–å‘¨è¾¹æ ¼å­
         /// </summary>
-        /// <param name="range">»ñÈ¡°ë¾¶</param>
-        /// <param name="includingSelf">ÊÇ·ñ°üº¬×Ô¼º</param>
-        /// <param name="areaShape">ĞÎ×´</param>
+        /// <param name="range">è·å–åŠå¾„</param>
+        /// <param name="includingSelf">æ˜¯å¦åŒ…å«è‡ªå·±</param>
+        /// <param name="areaShape">å½¢çŠ¶</param>
         /// <returns></returns>
         public virtual HashSet<Cell> GetNeighborCells(int range, bool includingSelf = false, AreaShape areaShape = AreaShape.Circle)
         {
@@ -96,17 +110,17 @@ namespace SrpgFramework.CellGrid.Cells
             {
                 case AreaShape.Circle:
                 default:
-                    result = GameManager.CellGridMgr.Cells.Values.Where(c => GetDistance(c) <= range).ToHashSet();
+                    result = GameManager.CellGridMgr.Cells.Where(c => GetDistance(c) <= range).ToHashSet();
                     break;
                 case AreaShape.Square:
-                    result = GameManager.CellGridMgr.Cells.Values.Where(c =>
+                    result = GameManager.CellGridMgr.Cells.Where(c =>
                     {
                         var vec = this.Coord - c.Coord;
                         return Mathf.Abs(vec.x) <= range && Mathf.Abs(vec.y) <= range;
                     }).ToHashSet();
                     break;
                 case AreaShape.Cross:
-                    result = GameManager.CellGridMgr.Cells.Values.Where(c => (this.Coord.x == c.Coord.x || this.Coord.y == c.Coord.y) && GetDistance(c) <= range).ToHashSet();
+                    result = GameManager.CellGridMgr.Cells.Where(c => (this.Coord.x == c.Coord.x || this.Coord.y == c.Coord.y) && GetDistance(c) <= range).ToHashSet();
                     break;
             }
             if (!includingSelf)
