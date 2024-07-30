@@ -1,7 +1,7 @@
+using static SrpgFramework.CellGrid.AStar.AStar;
 using SrpgFramework.CellGrid.Cells;
 using SrpgFramework.Global;
-using SrpgFramework.Units;
-using SrpgFramework.CellGrid.AStar;
+using SrpgFramework.Units.Units;
 using System.Collections.Generic;
 
 namespace SrpgFramework.CellGrid
@@ -21,8 +21,8 @@ namespace SrpgFramework.CellGrid
         public void Enter(Unit unit = null)
         {
             _unit = unit;
-            moveableArea = AStart.GetMoveableArea(unit.Cell, unit.Move, 9);
-            foreach(var c in moveableArea)
+            moveableArea = GetMoveableArea(unit.Cell, unit.Move, unit.Mov);
+            foreach (var c in moveableArea)
             {
                 c.Highlight(CellHighlighter.Tag_Selectable);
             }
@@ -39,14 +39,14 @@ namespace SrpgFramework.CellGrid
 
         public void OnCellClicked(Cell cell)
         {
-            GameManager.CellGridMgr.ToState(_mgr.IdleState);
+            BattleManager.CellGridMgr.ToState(_mgr.IdleState);
         }
 
         public void OnCellHighlighted(Cell cell)
         {
             if (moveableArea.Contains(cell))
             {
-                path = AStart.GetPath(_unit.Cell, cell, _unit.Move);
+                path = FindPath(_unit.Cell, cell, _unit.Move);
                 foreach (var c in path)
                     c.Highlight(CellHighlighter.Tag_Effect);
             }

@@ -1,5 +1,6 @@
 ﻿using SrpgFramework.Global;
-using SrpgFramework.Units;
+using SrpgFramework.Units.Units;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -64,7 +65,7 @@ namespace SrpgFramework.CellGrid.Cells
             {
                 if (_neighbors is null)
                 {
-                    _neighbors = GameManager.CellGridMgr.Cells.Where(c => GetDistance(c) == 1).ToHashSet();
+                    _neighbors = BattleManager.CellGridMgr.Cells.Values.Where(c => GetDistance(c) == 1).ToHashSet();
                 }
                 return _neighbors;
             }
@@ -72,12 +73,12 @@ namespace SrpgFramework.CellGrid.Cells
 
         private void Start()
         {
-            GameManager.CellGridMgr.RegisterCell(this);
+            BattleManager.CellGridMgr.RegisterCell(this);
         }
 
         private void OnDestroy()
         {
-            GameManager.CellGridMgr.UnRegisterCell(this);
+            BattleManager.CellGridMgr.UnRegisterCell(this);
         }
 
         /// <summary>
@@ -103,24 +104,51 @@ namespace SrpgFramework.CellGrid.Cells
         /// <param name="includingSelf">是否包含自己</param>
         /// <param name="areaShape">形状</param>
         /// <returns></returns>
-        public virtual HashSet<Cell> GetNeighborCells(int range, bool includingSelf = false, AreaShape areaShape = AreaShape.Circle)
+        public virtual HashSet<Cell> GetNeighborCells(int range, AreaShape areaShape = AreaShape.Circle, bool includingSelf = false)
         {
-            HashSet<Cell> result;
+            HashSet<Cell> result = new();
+            Action<Vector2Int, HashSet<Cell>> tryAdd = (vec,result) =>
+            {
+                if (BattleManager.CellGridMgr.Cells.ContainsKey(vec))
+                {
+                    result.Add(BattleManager.CellGridMgr.Cells[vec]);
+                }
+            };
+
             switch (areaShape)
             {
                 case AreaShape.Circle:
-                default:
-                    result = GameManager.CellGridMgr.Cells.Where(c => GetDistance(c) <= range).ToHashSet();
+                    for (var i = 0; i <= range; i++)
+                    {
+                        for (var j = 0; j <= range - i; j++)
+                        {
+                            tryAdd(Coord + new Vector2Int(i, j), result);
+                            tryAdd(Coord + new Vector2Int(-i, j), result);
+                            tryAdd(Coord + new Vector2Int(i, -j), result);
+                            tryAdd(Coord + new Vector2Int(-i, -j), result);
+                        }
+                    }
                     break;
                 case AreaShape.Square:
-                    result = GameManager.CellGridMgr.Cells.Where(c =>
+                    for (var i = 0; i <= range; i++)
                     {
-                        var vec = this.Coord - c.Coord;
-                        return Mathf.Abs(vec.x) <= range && Mathf.Abs(vec.y) <= range;
-                    }).ToHashSet();
+                        for (var j = 0; j <= range; j++)
+                        {
+                            tryAdd(Coord + new Vector2Int(i, j), result);
+                            tryAdd(Coord + new Vector2Int(-i, j), result);
+                            tryAdd(Coord + new Vector2Int(i, -j), result);
+                            tryAdd(Coord + new Vector2Int(-i, -j), result);
+                        }
+                    }
                     break;
                 case AreaShape.Cross:
-                    result = GameManager.CellGridMgr.Cells.Where(c => (this.Coord.x == c.Coord.x || this.Coord.y == c.Coord.y) && GetDistance(c) <= range).ToHashSet();
+                    for(var i = 0; i <= range; i++)
+                    {
+                        tryAdd(this.Coord + new Vector2Int(i, 0), result);
+                        tryAdd(this.Coord + new Vector2Int(0,i), result);
+                        tryAdd(this.Coord - new Vector2Int(-i, 0), result);
+                        tryAdd(this.Coord - new Vector2Int(0, i), result);
+                    }
                     break;
             }
             if (!includingSelf)

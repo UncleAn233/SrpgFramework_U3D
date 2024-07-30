@@ -1,5 +1,5 @@
 using SrpgFramework.Global;
-using SrpgFramework.Units;
+using SrpgFramework.Units.Units;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,12 +12,12 @@ namespace SrpgFramework.Players
         {
             if (this.Units.Any())
             {
-                GameManager.CellGridMgr.ToBlockInputState();
+                BattleManager.CellGridMgr.ToBlockInputState();
                 StartCoroutine(PlayCoroutine());
             }
         }
 
-        private void OnGameEnded()
+        private void OnGameEnd()
         {
             StopAllCoroutines();
         }
@@ -28,7 +28,7 @@ namespace SrpgFramework.Players
             {
                 yield return (unit.Ai?.Execute());
             }
-            GameManager.PlayerMgr.EndTurn();
+            BattleManager.PlayerMgr.NextPlayer();
             yield return null;
         }
 
@@ -36,7 +36,7 @@ namespace SrpgFramework.Players
         {
             return this.Units.OrderBy(unit =>
             {       
-                return GameManager.UnitMgr.GetEnemyUnits(this).Min(enemy => unit.Cell.GetDistance(enemy.Cell)); //离敌人近的先动
+                return BattleManager.UnitMgr.GetEnemyUnits(this).Min(enemy => unit.Cell.GetDistance(enemy.Cell)); //离敌人近的先动
             });
         }
     }

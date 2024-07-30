@@ -6,7 +6,7 @@ namespace SrpgFramework.Players
     {
         public override void Play()
         {
-            GameManager.CellGridMgr.ToIdleState();
+            BattleManager.CellGridMgr.ToIdleState();
         }
     }
 }

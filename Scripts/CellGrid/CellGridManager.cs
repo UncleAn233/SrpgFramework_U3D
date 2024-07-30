@@ -1,12 +1,12 @@
 using SrpgFramework.CellGrid.Cells;
-using SrpgFramework.Units;
+using SrpgFramework.Units.Units;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace SrpgFramework.CellGrid {
     public class CellGridManager : MonoBehaviour
     {
-        public HashSet<Cell> Cells { get; private set; } = new();
+        public Dictionary<Vector2Int,Cell> Cells { get; private set; } = new();
 
         #region CellGridState
         public ICellGridState CurrentGridState { get; private set; }
@@ -59,7 +59,7 @@ namespace SrpgFramework.CellGrid {
 
         public void RegisterCell(Cell cell)
         {
-            if(Cells.Add(cell))
+            if(Cells.TryAdd(cell.Coord, cell))
             {
                 cell.OnCellClicked += OnCellClicked;
                 cell.OnCellHighlighted += OnCellHighlighted;
@@ -72,7 +72,7 @@ namespace SrpgFramework.CellGrid {
 
         public void UnRegisterCell(Cell cell)
         {
-            if (Cells.Remove(cell))
+            if (Cells.Remove(cell.Coord))
             {
                 cell.OnCellClicked -= OnCellClicked;
                 cell.OnCellHighlighted -= OnCellHighlighted;

@@ -1,15 +1,15 @@
 using SrpgFramework.CellGrid.Cells;
-using SrpgFramework.Units;
+using SrpgFramework.Units.Units;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace SrpgFramework.CellGrid.AStar
 {
-    public class AStart
+    public class AStar
     {
-        public static List<Cell> GetPath(Cell start, Cell end, MoveUnit unit)
+        public static List<Cell> FindPath(Cell start, Cell end, MoveUnit unit)
         {
-            Dictionary<Cell, AStartNode> nodeDict = new Dictionary<Cell, AStartNode>() { { start, new AStartNode(0, start.GetDistance(end), null) } };   //记录每个格子的寻路信息
+            Dictionary<Cell, AStarNode> nodeDict = new Dictionary<Cell, AStarNode>() { { start, new AStarNode(0, start.GetDistance(end), null) } };   //记录每个格子的寻路信息
             var open = new HashSet<Cell>() { start };  //候选列表
             var close = new HashSet<Cell>();    //已处理列表
 
@@ -47,7 +47,7 @@ namespace SrpgFramework.CellGrid.AStar
                     if (!open.Contains(neighbor))    //如果节点没处理过则加入候选列表 并创建一个node
                     {
                         open.Add(neighbor);
-                        nodeDict.Add(neighbor, new AStartNode(costToNeighbor, neighbor.GetDistance(end), current));
+                        nodeDict.Add(neighbor, new AStarNode(costToNeighbor, neighbor.GetDistance(end), current));
                     }
                     else if (costToNeighbor < nodeDict[neighbor].G) //如果当前节点在候选列表中&&从当前节点到该节点的G值更小 更新节点
                     {
@@ -105,7 +105,7 @@ namespace SrpgFramework.CellGrid.AStar
         }
     }
 
-    internal struct AStartNode
+    internal struct AStarNode
     {
         /// <summary>
         /// 从起点到该点的实际距离
@@ -124,7 +124,7 @@ namespace SrpgFramework.CellGrid.AStar
         /// </summary>
         public Cell Connection { set; get; }
 
-        public AStartNode(int g, int h, Cell connection)
+        public AStarNode(int g, int h, Cell connection)
         {
             G = g;
             H = h;

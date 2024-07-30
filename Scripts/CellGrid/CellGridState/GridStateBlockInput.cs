@@ -1,5 +1,5 @@
 using SrpgFramework.CellGrid.Cells;
-using SrpgFramework.Units;
+using SrpgFramework.Units.Units;
 
 namespace SrpgFramework.CellGrid
 {

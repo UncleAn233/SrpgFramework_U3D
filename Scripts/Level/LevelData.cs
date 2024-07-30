@@ -2,7 +2,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SrpgFramework.CellGrid.Cells;
 using SrpgFramework.Cells;
-using SrpgFramework.Units;
+using SrpgFramework.Units.Units;
 using System;
 using System.Collections.Generic;
 using UnityEngine;

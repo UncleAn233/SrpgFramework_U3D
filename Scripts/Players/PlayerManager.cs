@@ -1,18 +1,25 @@
 ﻿using SrpgFramework.Global;
+using SrpgFramework.Level;
+using SrpgFramework.Units.Units;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace SrpgFramework.Players
 {
     public class PlayerManager : MonoBehaviour
     {
+        public Action<int> OnPlayerStart;
+        public Action<int> OnPlayerEnd;
         public List<Player> Players { get; private set; }
-        public Player CurrentPlayer => Players[current];
-        private int current;
+        public Player CurrentPlayer => Players[currentPlayerIndex];
+        private int currentPlayerIndex;
 
         public Action<int> OnTurnStart;
         public Action<int> OnTurnEnd;
+        public int CurrentTurn { get; private set; }
+        public int MaxTurn { get; private set; }
 
         private void Awake()
         {
@@ -20,10 +27,11 @@ namespace SrpgFramework.Players
         }
         private void Start()
         {
-            var lvManager = GameManager.LevelMgr;
-/*            lvManager.OnLevelStart += GameStart;
+/*            var lvManager = BattleManager.LevelMgr;
+            lvManager.OnLevelStart += GameStart;
             lvManager.OnLevelEnd += GameEnd;*/
             GeneratePlayers();
+            GameStart();
         }
 
         public Player GetPlayer(int num)
@@ -37,31 +45,54 @@ namespace SrpgFramework.Players
 
         public Player NextPlayer()
         {
-            current++;
-            if (current >= Players.Count)
+            BattleManager.CellGridMgr.ToBlockInputState();
+            OnPlayerEnd(currentPlayerIndex);
+
+            var next = Players.First(p => p.PlayerNumber > currentPlayerIndex && p.HasUnit());
+            if(next is null)
             {
-                current = 0;
+                currentPlayerIndex = 0;
+                NextTurn();
             }
-            if (CurrentPlayer.Units.Count == 0)
+            else
             {
-                return NextPlayer();
+                currentPlayerIndex = next.PlayerNumber;
             }
-            return CurrentPlayer;
 
-        }
-
-        public void EndTurn()
-        {
-            GameManager.CellGridMgr.ToBlockInputState();
-
-            OnTurnEnd?.Invoke(current);
-            NextPlayer();
-            OnTurnStart?.Invoke(current);
+            OnPlayerStart(currentPlayerIndex);
             CurrentPlayer.Play();
-
-            Debug.Log(string.Format("Player {0} turn", CurrentPlayer.PlayerNumber));
+            return CurrentPlayer;
         }
 
+        public void NextTurn()
+        {
+            OnTurnEnd?.Invoke(CurrentTurn);
+            CurrentTurn++;
+            if (CurrentTurn <= MaxTurn)
+            {
+                OnTurnStart?.Invoke(CurrentTurn);
+            }
+            else
+            {
+
+            }
+        }
+
+        public void RegisterUnit(Unit unit)
+        {
+            OnTurnStart += unit.OnTurnStart;
+            OnTurnEnd += unit.OnTurnEnd;
+        }
+
+        public void UnRegisterUnit(Unit unit)
+        {
+            OnTurnStart -= unit.OnTurnStart;
+            OnTurnEnd -= unit.OnTurnEnd;
+        }
+
+        /// <summary>
+        /// 创建Players
+        /// </summary>
         public void GeneratePlayers()
         {
             Players.Clear();
@@ -72,6 +103,7 @@ namespace SrpgFramework.Players
                 player.Alignment = alignment;
             };
             var playerParent = new GameObject("Players");
+            playerParent.transform.parent = this.transform;
             regist(playerParent.AddComponent<HumanPlayer>(), 0, PlayerAlignment.Friend);   //玩家
             regist(playerParent.AddComponent<AiPlayer>(), 1, PlayerAlignment.Friend);   //友军
             regist(playerParent.AddComponent<AiPlayer>(), 2, PlayerAlignment.Enemy);  //敌人
@@ -81,8 +113,8 @@ namespace SrpgFramework.Players
 
         void GameStart()
         {
-            current = 0;
-            OnTurnStart?.Invoke(current);
+            currentPlayerIndex = 0;
+            OnPlayerStart?.Invoke(currentPlayerIndex);
             CurrentPlayer.Play();
         }
 

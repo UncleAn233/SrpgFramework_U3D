@@ -271,6 +271,10 @@ PrefabInstance:
       propertyPath: cell
       value: 
       objectReference: {fileID: 2107103191}
+    - target: {fileID: 1880384413096429209, guid: 3432f07bd9dfd064fa72686de383dbb0, type: 3}
+      propertyPath: PlayerNumber
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 5931437007025433902, guid: 3432f07bd9dfd064fa72686de383dbb0, type: 3}
       propertyPath: m_LocalPosition.x
       value: 5

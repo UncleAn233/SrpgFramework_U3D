@@ -1,5 +1,5 @@
 using SrpgFramework.Global;
-using SrpgFramework.Units;
+using SrpgFramework.Units.Units;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -11,7 +11,7 @@ namespace SrpgFramework.Players
         public int PlayerNumber { get; set; }
         public PlayerAlignment Alignment { get; set; }
 
-        public List<Unit> Units => GameManager.UnitMgr.Units.Where(u => u.PlayerNumber == PlayerNumber).ToList();
+        public List<Unit> Units => BattleManager.UnitMgr.Units.Where(u => u.PlayerNumber == PlayerNumber).ToList();
         public abstract void Play();
 
         public bool IsFriend(Player player)
@@ -21,6 +21,11 @@ namespace SrpgFramework.Players
         public bool IsEnemy(Player player)
         {
             return player is not null && (this.Alignment & player.Alignment) == 0;
+        }
+
+        public bool HasUnit()
+        {
+            return BattleManager.UnitMgr.Units.Any(u => u.PlayerNumber == PlayerNumber);
         }
     }
 

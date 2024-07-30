@@ -1,14 +1,11 @@
-using SrpgFramework.Abilities;
 using SrpgFramework.CellGrid.Cells;
-using SrpgFramework.Units;
+using SrpgFramework.Units.Units;
 
 namespace SrpgFramework.CellGrid
 {
     public class GridStateIdle : ICellGridState
     {
         private CellGridManager _mgr;
-
-        private MoveAbility moveAbility = new();
 
         public GridStateIdle(CellGridManager mgr)
         {
@@ -21,13 +18,11 @@ namespace SrpgFramework.CellGrid
 
         public void Exit()
         {
-            
         }
 
         public void OnUnitClicked(Unit unit)
         {
-            //_mgr.ToState(_mgr.SelectUnitState, unit);
-            _mgr.ToState(moveAbility, unit);
+            _mgr.ToState(_mgr.SelectUnitState, unit);
         }
 
         public void OnUnitHighlighted(Unit unit)
