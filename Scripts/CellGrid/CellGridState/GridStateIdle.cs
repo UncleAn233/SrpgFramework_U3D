@@ -12,41 +12,41 @@ namespace SrpgFramework.CellGrid
             this._mgr = mgr;
         }
 
-        public void Enter(Unit unit = null)
+        public void Enter(Unit unit)
         {
         }
 
-        public void Exit()
+        public void Exit(Unit self)
         {
         }
 
-        public void OnUnitClicked(Unit unit)
+        public void OnUnitClicked(Unit self, Unit unit)
         {
             _mgr.ToState(_mgr.SelectUnitState, unit);
         }
 
-        public void OnUnitHighlighted(Unit unit)
+        public void OnUnitHighlighted(Unit self, Unit unit)
         {
-            unit.Highlight("");
+            unit.Highlight(CellHighlighter.Tag_Cursor);
         }
 
-        public void OnUnitDehighlighted(Unit unit)
+        public void OnUnitDehighlighted(Unit self, Unit unit)
         {
             unit.DeHighlight();
         }
 
-        public void OnCellDehighlighted(Cell cell)
+        public void OnCellDehighlighted(Unit self, Cell cell)
         {
             cell.DeHighlight();
         }
 
-        public void OnCellHighlighted(Cell cell)
+        public void OnCellHighlighted(Unit self, Cell cell)
         {
             cell.Highlight(CellHighlighter.Tag_Cursor);
         }
 
 
-        public void OnCellClicked(Cell cell)
+        public void OnCellClicked(Unit self, Cell cell)
         {
         }
 

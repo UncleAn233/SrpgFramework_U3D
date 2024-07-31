@@ -1,5 +1,4 @@
 ﻿using SrpgFramework.Global;
-using SrpgFramework.Level;
 using SrpgFramework.Units.Units;
 using System;
 using System.Collections.Generic;
@@ -19,7 +18,7 @@ namespace SrpgFramework.Players
         public Action<int> OnTurnStart;
         public Action<int> OnTurnEnd;
         public int CurrentTurn { get; private set; }
-        public int MaxTurn { get; private set; }
+        public int MaxTurn { get; private set; } = 99;
 
         private void Awake()
         {
@@ -34,6 +33,14 @@ namespace SrpgFramework.Players
             GameStart();
         }
 
+        public void Update()
+        {
+            if(Input.GetKeyDown(KeyCode.M))
+            {
+                NextPlayer();
+            }    
+        }
+
         public Player GetPlayer(int num)
         {
             if (Players.Count < num || num < 0)
@@ -46,9 +53,9 @@ namespace SrpgFramework.Players
         public Player NextPlayer()
         {
             BattleManager.CellGridMgr.ToBlockInputState();
-            OnPlayerEnd(currentPlayerIndex);
+            OnPlayerEnd?.Invoke(currentPlayerIndex);
 
-            var next = Players.First(p => p.PlayerNumber > currentPlayerIndex && p.HasUnit());
+            var next = Players.FirstOrDefault(p => p.PlayerNumber > currentPlayerIndex && p.HasUnit());
             if(next is null)
             {
                 currentPlayerIndex = 0;
@@ -58,8 +65,8 @@ namespace SrpgFramework.Players
             {
                 currentPlayerIndex = next.PlayerNumber;
             }
-
-            OnPlayerStart(currentPlayerIndex);
+            Debug.Log($"{currentPlayerIndex} Player's Turn");
+            OnPlayerStart?.Invoke(currentPlayerIndex);
             CurrentPlayer.Play();
             return CurrentPlayer;
         }
@@ -80,14 +87,14 @@ namespace SrpgFramework.Players
 
         public void RegisterUnit(Unit unit)
         {
-            OnTurnStart += unit.OnTurnStart;
-            OnTurnEnd += unit.OnTurnEnd;
+            OnTurnStart += unit.TurnStart;
+            OnTurnEnd += unit.TurnEnd;
         }
 
         public void UnRegisterUnit(Unit unit)
         {
-            OnTurnStart -= unit.OnTurnStart;
-            OnTurnEnd -= unit.OnTurnEnd;
+            OnTurnStart -= unit.TurnStart;
+            OnTurnEnd -= unit.TurnEnd;
         }
 
         /// <summary>
@@ -113,9 +120,9 @@ namespace SrpgFramework.Players
 
         void GameStart()
         {
-            currentPlayerIndex = 0;
-            OnPlayerStart?.Invoke(currentPlayerIndex);
-            CurrentPlayer.Play();
+            currentPlayerIndex = -1;
+            CurrentTurn = 0;
+            NextPlayer();
         }
 
         public void GameEnd()

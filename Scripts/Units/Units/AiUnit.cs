@@ -1,4 +1,4 @@
-using SrpgFramework.Units.Abilities;
+using SrpgFramework.Units.Skills;
 using SrpgFramework.Ai.Evaluators;
 using SrpgFramework.CellGrid.Cells;
 using SrpgFramework.Global;
@@ -15,8 +15,8 @@ namespace SrpgFramework.Units.Units
         public Dictionary<Unit, float> UnitScoreDict { get; private set; } = new();
         public Dictionary<Cell, float> CellScoreDict { get; private set; } = new();
 
-        public HashSet<Ability> MoveBrains { get; private set; } = new();
-        public HashSet<Ability> ActionBrains { get; private set; } = new();
+        public HashSet<Skill> MoveBrains { get; private set; } = new();
+        public HashSet<Skill> ActionBrains { get; private set; } = new();
 
         public List<Evaluator<Unit>> UnitEvaluators = new();
         public List<Evaluator<Cell>> CellEvaluators = new();
@@ -24,6 +24,8 @@ namespace SrpgFramework.Units.Units
         private void Awake()
         {
             unit = GetComponent<Unit>();
+            MoveBrains.Add(new MoveSkill());
+            ActionBrains.Add(new AttackSkill());
         }
 
         private void Start()
@@ -43,38 +45,48 @@ namespace SrpgFramework.Units.Units
 
             foreach (var u in BattleManager.UnitMgr.Units)
             {
-                if (UnitEvaluators.Any())
-                {
-                    UnitScoreDict.Add(u, UnitEvaluators.Sum(evaluator =>
-                    {
-                        evaluator.PreCalculate(unit);
-                        return evaluator.Evaluate(u, unit) * evaluator.Weight;
-                    }));
-                }
-                else
-                {
-                    UnitScoreDict.Add(u, 0);
-                }
+                EvaluateUnit(u);
             }
         }
 
         public void EvaluateCells()
         {
-            CellEvaluators.Clear();
-            foreach(var c in BattleManager.CellGridMgr.Cells)
+            CellScoreDict.Clear();
+            foreach(var c in BattleManager.CellGridMgr.Cells.Values)
             {
-                if (CellEvaluators.Any())
+                EvaluateCell(c);
+            }
+        }
+
+        public void EvaluateUnit(Unit toEvaluate)
+        {
+            if (UnitEvaluators.Any())
+            {
+                UnitScoreDict.Add(toEvaluate, UnitEvaluators.Sum(evaluator =>
                 {
-                    CellScoreDict.Add(c.Value, CellEvaluators.Sum(evaluator =>
-                    {
-                        evaluator.PreCalculate(unit);
-                        return evaluator.Evaluate(c.Value, unit) * evaluator.Weight;
-                    }));
-                }
-                else
+                    evaluator.PreCalculate(unit);
+                    return evaluator.Evaluate(toEvaluate, unit) * evaluator.Weight;
+                }));
+            }
+            else
+            {
+                UnitScoreDict.Add(toEvaluate, 0);
+            }
+        }
+
+        public void EvaluateCell(Cell toEvaluate)
+        {
+            if (CellEvaluators.Any())
+            {
+                CellScoreDict.Add(toEvaluate, CellEvaluators.Sum(evaluator =>
                 {
-                    CellScoreDict.Add(c.Value, 0);
-                }
+                    evaluator.PreCalculate(unit);
+                    return evaluator.Evaluate(toEvaluate, unit) * evaluator.Weight;
+                }));
+            }
+            else
+            {
+                CellScoreDict.Add(toEvaluate, 0);
             }
         }
 
@@ -88,7 +100,7 @@ namespace SrpgFramework.Units.Units
 
             while (brains.Any())
             {
-                var topBrain = brains.OrderByDescending(brain => brain.Evaluate(unit, unit.Cell)).First();
+                var topBrain = brains.OrderByDescending(brain => brain.Evaluate(unit)).First();
                 yield return topBrain.AIExecute(unit);
                 brains = brainList.Where(brain => brain.ShouldExecute(unit, unit.Cell));
             }

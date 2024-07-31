@@ -6,14 +6,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SrpgFramework.Units.Abilities
+namespace SrpgFramework.Units.Skills
 {
-    public class MoveAbility : Ability
+    public class MoveSkill : Skill
     {
         public Cell Destination { get; set; }   //目的地
         private IList<Cell> path;   //路径
         private HashSet<Cell> moveableArea; //可移动范围
-        private Unit unit;  //当前单位
 
         public override IEnumerator Act(Unit unit)
         {
@@ -21,17 +20,16 @@ namespace SrpgFramework.Units.Abilities
             yield return unit.Move.Move(Destination, path);
         }
 
-        public override void Enter(Unit unit)
+        public override void Enter(Unit self)
         {
-            moveableArea = AStar.GetMoveableArea(unit.Cell, unit.Move, unit.Mov);
+            moveableArea = AStar.GetMoveableArea(self.Cell, self.Move, self.Mov);
             foreach (var cell in moveableArea)
             {
                 cell.Highlight(CellHighlighter.Tag_Selectable);
             }
-            this.unit = unit;
         }
 
-        public override void Exit()
+        public override void Exit(Unit self = null)
         {
             foreach(var cell in moveableArea)
             {
@@ -39,14 +37,13 @@ namespace SrpgFramework.Units.Abilities
             }
             moveableArea = null;
             path = null;
-            unit = null;
         }
 
-        public override void OnCellHighlighted(Cell cell)
+        public override void OnCellHighlighted(Unit self, Cell cell)
         {
             if (moveableArea.Contains(cell))
             {
-                path = AStar.FindPath(unit.Cell, cell, unit.Move);
+                path = AStar.FindPath(self.Cell, cell, self.Move);
                 foreach (var c in path)
                 {
                     c.Highlight(CellHighlighter.Tag_Effect);
@@ -56,7 +53,7 @@ namespace SrpgFramework.Units.Abilities
                 cell.Highlight(CellHighlighter.Tag_Cursor);
         }
 
-        public override void OnCellDehighlighted(Cell cell)
+        public override void OnCellDehighlighted(Unit self, Cell cell)
         {
             if (moveableArea.Contains(cell))
             {
@@ -74,12 +71,12 @@ namespace SrpgFramework.Units.Abilities
             }
         }
 
-        public override void OnCellClicked(Cell cell)
+        public override void OnCellClicked(Unit self, Cell cell)
         {
             if (moveableArea.Contains(cell))
             {
                 Destination = cell;
-                unit.StartCoroutine(PlayerExecute(unit));
+                self.StartCoroutine(PlayerExecute(self));
             }
             else
             {
@@ -87,12 +84,12 @@ namespace SrpgFramework.Units.Abilities
             }
         }
 
-        public override void OnUnitHighlighted(Unit other)
+        public override void OnUnitHighlighted(Unit self, Unit other)
         {
             other.Highlight(CellHighlighter.Tag_Cursor);
         }
 
-        public override void OnUnitDehighlighted(Unit other)
+        public override void OnUnitDehighlighted(Unit self, Unit other)
         {
             if (moveableArea.Contains(other.Cell))
                 other.Cell.Highlight(CellHighlighter.Tag_Selectable);
@@ -100,20 +97,18 @@ namespace SrpgFramework.Units.Abilities
                 other.DeHighlight();
         }
 
-        public override bool CanPerform(Unit unit)
+        public override bool CanPerform(Unit self)
         {
-            return unit.Move is not null && unit.Move.CanMove();
+            return self.Move is not null && self.Move.CanMove();
         }
 
-        public override bool ShouldExecute(Unit unit, Cell cell)
+        public override bool ShouldExecute(Unit self, Cell cell)
         {
-            if(!CanPerform(unit)) 
+            if(!CanPerform(self)) 
                 return false;
 
-            path = null;
-            var top = unit.Ai.CellScoreDict.Where(c => unit.Move.IsCellMovableTo(c.Key)).OrderByDescending(c => c.Value).First();
-            
-            if(top.Value > unit.Ai.CellScoreDict[unit.Cell])
+            var top = self.Ai.CellScoreDict.Where(c => self.Move.IsCellMovableTo(c.Key)).OrderByDescending(c => c.Value).First();
+            if(top.Value > self.Ai.CellScoreDict[self.Cell])
             {
                 Destination = top.Key;
                 return true;
@@ -121,21 +116,20 @@ namespace SrpgFramework.Units.Abilities
             return false;
         }
 
-        public override float Evaluate(Unit unit, Cell cell)
+        public override float Evaluate(Unit self)
         {
-            var totalPath = AStar.FindPath(unit.Cell, cell, unit.Move);
+            var totalPath = AStar.FindPath(self.Cell, Destination, self.Move);
             int cost = 0;
-            
-            for(var i = 0; i < totalPath.Count; i++)
+            for (var i = 0; i < totalPath.Count; i++)
             {
                 cost += totalPath[i].MoveCost;
-                if (cost > unit.Mov || !unit.Move.IsCellMovableTo(totalPath[i]))
-                {
-                    Destination = totalPath[i - 1 < 0 ? 0 : i - 1];
-                }
+                if (cost <= self.Mov && self.Move.IsCellMovableTo(totalPath[i]))
+                    Destination = totalPath[i];
+                else
+                    break;
             }
-
-            return unit.Ai.CellScoreDict[Destination];
+            
+            return self.Ai.CellScoreDict[Destination];
         }
     }
 }

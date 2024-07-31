@@ -24,6 +24,8 @@ namespace SrpgFramework.CellGrid {
         /// </summary>
         public ICellGridState SelectUnitState { get; private set; }
 
+        private Unit currentUnit;
+
         public void Awake()
         {
             BlockInputState = new GridStateBlockInput();
@@ -32,13 +34,14 @@ namespace SrpgFramework.CellGrid {
             CurrentGridState = IdleState;
         }
 
-        public bool ToState(ICellGridState nextState, Unit unit = null)
+        public bool ToState(ICellGridState nextState, Unit unit)
         {
             if(CurrentGridState.CanTranslateTo(nextState))
             {
-                CurrentGridState?.Exit();
+                CurrentGridState?.Exit(currentUnit);
                 CurrentGridState = nextState;
-                CurrentGridState.Enter(unit);
+                currentUnit = unit;
+                CurrentGridState.Enter(currentUnit);
                 return true;
             }
             else
@@ -49,12 +52,12 @@ namespace SrpgFramework.CellGrid {
 
         public bool ToBlockInputState()
         {
-            return ToState(BlockInputState);
+            return ToState(BlockInputState, null);
         }
 
         public bool ToIdleState()
         {
-            return ToState(IdleState);
+            return ToState(IdleState, null);
         }
 
         public void RegisterCell(Cell cell)
@@ -85,27 +88,27 @@ namespace SrpgFramework.CellGrid {
 
         private void OnCellDehighlighted(Cell cell)
         {
-            CurrentGridState.OnCellDehighlighted(cell);
+            CurrentGridState.OnCellDehighlighted(currentUnit, cell);
         }
         private void OnCellHighlighted(Cell cell)
         {
-            CurrentGridState.OnCellHighlighted(cell);
+            CurrentGridState.OnCellHighlighted(currentUnit, cell);
         }
         private void OnCellClicked(Cell cell)
         {
-            CurrentGridState.OnCellClicked(cell);
+            CurrentGridState.OnCellClicked(currentUnit, cell);
         }
         private void OnUnitClicked(Unit unit)
         {
-            CurrentGridState.OnUnitClicked(unit);
+            CurrentGridState.OnUnitClicked(currentUnit, unit);
         }
         private void OnUnitHighlighted(Unit unit)
         {
-            CurrentGridState.OnUnitHighlighted(unit);
+            CurrentGridState.OnUnitHighlighted(currentUnit, unit);
         }
         private void OnUnitDehighlighted(Unit unit)
         {
-            CurrentGridState.OnUnitDehighlighted(unit);
+            CurrentGridState.OnUnitDehighlighted(currentUnit, unit);
         }
         #endregion
     }

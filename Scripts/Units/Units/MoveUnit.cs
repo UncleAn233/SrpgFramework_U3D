@@ -10,6 +10,9 @@ namespace SrpgFramework.Units.Units
     {
         private Unit unit;
 
+        public int MovePoints { get; set; }
+        public int TotalMovePoints { get; set; }
+
         public GroundType MovableGroundType { get; set; }
         public static float MoveAnimationSpeed = 1.5f;
 
@@ -24,14 +27,14 @@ namespace SrpgFramework.Units.Units
 
         private void Start()
         {
-            unit.Points.Add("Move", 1);
-            unit.Points.Add("TotalMove", 1);
-            unit.OnTurnEnd += (turn) => { unit.Points["Move"] = unit.Points["TotalMove"]; };
+            MovePoints = 1;
+            TotalMovePoints = 1;
+            unit.OnTurnEnd += (turn) => { MovePoints = TotalMovePoints; };
         }
 
         public bool CanMove()
         {
-            return unit.Points["Move"] > 0;
+            return MovePoints > 0;
         }
 
         public virtual bool IsCellMovableTo(Cell cell)
@@ -52,7 +55,7 @@ namespace SrpgFramework.Units.Units
 
         public virtual IEnumerator Move(Cell destinationCell, IList<Cell> path)
         {
-            unit.Points["Move"]--;
+            MovePoints--;
             OnMoveStart?.Invoke();
 
             if (MoveAnimationSpeed > 0)

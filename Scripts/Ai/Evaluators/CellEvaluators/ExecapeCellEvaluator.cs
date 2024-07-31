@@ -15,7 +15,7 @@ namespace SrpgFramework.Players.AI.Evaluators
         public float DangerLine = 0.2f;    //低于该血线视为危险值
         public override float Evaluate(Cell toEvaluate, Unit unit)
         {
-            if (unit.HpPercent < DangerLine || unit.Points["Action"] == 0)
+            if (unit.HpPercent < DangerLine || unit.ActionPoints == 0)
             {
                 var distance = toEvaluate.GetDistance(unit.Cell);
                 if (distance > unit.Mov)

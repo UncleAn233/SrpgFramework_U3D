@@ -5,9 +5,9 @@ using SrpgFramework.Units.Units;
 using System;
 using System.Collections;
 
-namespace SrpgFramework.Units.Abilities
+namespace SrpgFramework.Units.Skills
 {
-    public abstract class Ability : ICellGridState
+    public abstract class Skill : ICellGridState
     {
         public virtual IEnumerator Act(Unit unit) { yield return null; }
 
@@ -37,18 +37,24 @@ namespace SrpgFramework.Units.Abilities
             yield return Execute(unit, () => { }, () => { unit.Ai.EvaluateUnits(); });
         }
 
-        public virtual void Enter(Unit unit = null) { }
-        public virtual void Exit() { }
-        public virtual void OnCellClicked(Cell cell) { }
-        public virtual void OnCellDehighlighted(Cell cell) { }
-        public virtual void OnCellHighlighted(Cell cell) { }
-        public virtual void OnUnitClicked(Unit unit) { }
-        public virtual void OnUnitDehighlighted(Unit unit) { }
-        public virtual void OnUnitHighlighted(Unit unit) { }
-        public virtual bool CanPerform(Unit unit) { return true; }
+        public virtual void Enter(Unit self) { }
+        public virtual void Exit(Unit self) { }
+        public virtual void OnCellClicked(Unit self, Cell cell) { }
+        public virtual void OnCellDehighlighted(Unit self, Cell cell) { }
+        public virtual void OnCellHighlighted(Unit self, Cell cell) { }
+        public virtual void OnUnitClicked(Unit self, Unit unit) { }
+        public virtual void OnUnitDehighlighted(Unit self, Unit unit) { }
+        public virtual void OnUnitHighlighted(Unit self, Unit unit) { }
+        public virtual bool CanPerform(Unit self) { return true; }
 
         public bool ShouldExecute(Unit unit) { return ShouldExecute(unit, unit.Cell); }
-        public virtual bool ShouldExecute(Unit unit, Cell cell) { return false; }
-        public virtual float Evaluate(Unit unit, Cell cell) { return -1; }
+        /// <summary>
+        /// 判断AI是否可以使用该Skill 同时包含一些前置处理
+        /// </summary>
+        /// <param name="self">使用单位</param>
+        /// <param name="cell">假设单位所处的Cell</param>
+        /// <returns></returns>
+        public virtual bool ShouldExecute(Unit self, Cell cell) { return false; }
+        public virtual float Evaluate(Unit self) { return 0; }
     }
 }

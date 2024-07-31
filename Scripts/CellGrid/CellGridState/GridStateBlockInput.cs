@@ -9,31 +9,31 @@ namespace SrpgFramework.CellGrid
         {
         }
 
-        public void Exit()
+        public void Exit(Unit self = null)
         {
         }
 
-        public void OnCellClicked(Cell cell)
+        public void OnCellClicked(Unit self, Cell cell)
         {
         }
 
-        public void OnCellDehighlighted(Cell cell)
+        public void OnCellDehighlighted(Unit self, Cell cell)
         {
         }
 
-        public void OnCellHighlighted(Cell cell)
+        public void OnCellHighlighted(Unit self, Cell cell)
         {
         }
 
-        public void OnUnitClicked(Unit unit)
+        public void OnUnitClicked(Unit self, Unit unit)
         {
         }
 
-        public void OnUnitDehighlighted(Unit unit)
+        public void OnUnitDehighlighted(Unit self, Unit unit)
         {
         }
 
-        public void OnUnitHighlighted(Unit unit)
+        public void OnUnitHighlighted(Unit self, Unit unit)
         {
         }
     }

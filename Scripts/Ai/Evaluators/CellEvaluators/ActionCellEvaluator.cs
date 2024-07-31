@@ -11,7 +11,7 @@ namespace SrpgFramework.Players.AI.Evaluators
     {
         public override float Evaluate(Cell toEvaluate, Unit unit)
         {
-            if (unit.Points["Action"] == 0)
+            if (unit.ActionPoints == 0)
                 return 0;
 
             float top = 0f;
@@ -19,7 +19,7 @@ namespace SrpgFramework.Players.AI.Evaluators
             {
                 if (action.ShouldExecute(unit, toEvaluate))
                 {
-                    var score = action.Evaluate(unit, toEvaluate);
+                    var score = action.Evaluate(unit);
                     top = score > top ? score : top;
                 }
             }

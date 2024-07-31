@@ -1,20 +1,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace SrpgFramework.Units.Abilities
+namespace SrpgFramework.Units.Skills
 {
-    public class AbilityManager : MonoBehaviour
+    public class SkillManager : MonoBehaviour
     {
-        private Dictionary<string, Ability> abilities { get; set; }
+        private Dictionary<string, Skill> abilities { get; set; }
 
         private void Awake()
         {
             abilities = new();
         }
 
-        public Ability GetAbility(string id)
+        public Skill GetSkill(string id)
         {
-            if (abilities.TryGetValue(id, out Ability ability))
+            if (abilities.TryGetValue(id, out Skill ability))
             {
                 return ability;
             }

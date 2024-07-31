@@ -6,7 +6,10 @@ namespace SrpgFramework.Units.Units
         public int Lv { get; set; }    //等级
         public int Exp { get; set; }     //经验
 
-        public int MaxHp { get; set; }
+        public int ActionPoints { get; set; }
+        public int TotalActionPoints { get; set; }
+
+        public int MaxHp { get; set; } = 10;
         private int hp = 10;    //血条
         public int Hp
         {

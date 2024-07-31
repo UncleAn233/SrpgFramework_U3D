@@ -27,7 +27,6 @@ namespace SrpgFramework.Units.Units
         public int PlayerNumber;
         public Player Player => BattleManager.PlayerMgr.GetPlayer(PlayerNumber);
 
-
         [SerializeField]
         [HideInInspector]
         private Cell cell;
@@ -45,15 +44,11 @@ namespace SrpgFramework.Units.Units
             }
         }
 
-        public Dictionary<string, int> Points { get; private set; }
-        
         public MoveUnit Move { get; internal set; }
         public AiUnit Ai { get; internal set; }
 
         private void Awake()
         {
-            Points = new();
-
             if(UnitType == UnitType.PC || UnitType == UnitType.NPC)
             {
                 Move = this.AddComponent<MoveUnit>();
@@ -64,8 +59,10 @@ namespace SrpgFramework.Units.Units
         private void Start()
         {
             Cell.Unit = this;
-            Points.Add("Action", 1);
-            Points.Add("TotalAction", 1);
+            BattleManager.PlayerMgr.RegisterUnit(this);
+            BattleManager.UnitMgr.Units.Add(this);
+            ActionPoints = 1;
+            TotalActionPoints = 1;
         }
 
         public void SetPos(Cell cell)

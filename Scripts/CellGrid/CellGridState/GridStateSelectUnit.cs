@@ -18,7 +18,7 @@ namespace SrpgFramework.CellGrid
             _mgr = mgr;
         }
 
-        public void Enter(Unit unit = null)
+        public void Enter(Unit unit)
         {
             _unit = unit;
             moveableArea = GetMoveableArea(unit.Cell, unit.Move, unit.Mov);
@@ -28,40 +28,30 @@ namespace SrpgFramework.CellGrid
             }
         }
 
-        public void Exit()
+        public void Exit(Unit self)
         {
             _unit = null;
-            foreach(var c in moveableArea)
+            foreach (var c in moveableArea)
             {
                 c.DeHighlight();
             }
         }
 
-        public void OnCellClicked(Cell cell)
+        public void OnCellClicked(Unit self, Cell cell)
         {
-            BattleManager.CellGridMgr.ToState(_mgr.IdleState);
+            BattleManager.CellGridMgr.ToState(_mgr.IdleState, null);
         }
 
-        public void OnCellHighlighted(Cell cell)
+        public void OnCellHighlighted(Unit self, Cell cell)
+        {
+            cell.Highlight(CellHighlighter.Tag_Cursor);
+        }
+
+        public void OnCellDehighlighted(Unit self, Cell cell)
         {
             if (moveableArea.Contains(cell))
             {
-                path = FindPath(_unit.Cell, cell, _unit.Move);
-                foreach (var c in path)
-                    c.Highlight(CellHighlighter.Tag_Effect);
-            }
-            else
-            {
-                cell.Highlight(CellHighlighter.Tag_Cursor);
-            }
-        }
-
-        public void OnCellDehighlighted(Cell cell)
-        {
-            if (moveableArea.Contains(cell))
-            {
-                foreach (var c in path)
-                    c.Highlight(CellHighlighter.Tag_Selectable);
+                cell.Highlight(CellHighlighter.Tag_Selectable);
             }
             else
             {
@@ -69,16 +59,16 @@ namespace SrpgFramework.CellGrid
             }
         }
 
-        public void OnUnitClicked(Unit unit)
+        public void OnUnitClicked(Unit self, Unit unit)
         {
         }
 
-        public void OnUnitDehighlighted(Unit unit)
+        public void OnUnitDehighlighted(Unit self, Unit unit)
         {
             unit.DeHighlight();
         }
 
-        public void OnUnitHighlighted(Unit unit)
+        public void OnUnitHighlighted(Unit self, Unit unit)
         {
             unit.Highlight(CellHighlighter.Tag_Cursor);
         }
