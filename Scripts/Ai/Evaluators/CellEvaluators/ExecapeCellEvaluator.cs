@@ -13,18 +13,17 @@ namespace SrpgFramework.Players.AI.Evaluators
     {
         [Range(0, 1)]
         public float DangerLine = 0.2f;    //低于该血线视为危险值
+
         public override float Evaluate(Cell toEvaluate, Unit unit)
         {
-            if (unit.HpPercent < DangerLine || unit.ActionPoints == 0)
+            if (unit.HpPercent < DangerLine || unit.ActionPoints == 0)  //只有血量处于危险值或已经没有行动机会时加分
             {
-                var distance = toEvaluate.GetDistance(unit.Cell);
-                if (distance > unit.Mov)
+                if (toEvaluate.GetDistance(unit.Cell) > unit.Mov)
                 {
-                    return 0;
+                    return 0;   //不会以目前无法抵达的格子为目标
                 }
 
                 var score = BattleManager.UnitMgr.GetEnemyUnits(unit.Player).Min(u => u.Cell.GetDistance(toEvaluate) + notOnLine(u.Cell, toEvaluate));
-
                 return score;
             }
 

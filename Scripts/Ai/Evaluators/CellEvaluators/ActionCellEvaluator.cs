@@ -23,7 +23,7 @@ namespace SrpgFramework.Players.AI.Evaluators
                     top = score > top ? score : top;
                 }
             }
-            return top * Weight;
+            return top * Weight + (toEvaluate == unit.Cell ? 1f : 0); //给自己所处格子一个加分（更偏向不移动）
         }
     }
 }

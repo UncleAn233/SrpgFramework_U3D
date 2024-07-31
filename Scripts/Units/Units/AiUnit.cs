@@ -60,33 +60,48 @@ namespace SrpgFramework.Units.Units
 
         public void EvaluateUnit(Unit toEvaluate)
         {
-            if (UnitEvaluators.Any())
+            var score = !UnitEvaluators.Any() ? 0 : UnitEvaluators.Sum(evaluator =>
             {
-                UnitScoreDict.Add(toEvaluate, UnitEvaluators.Sum(evaluator =>
-                {
-                    evaluator.PreCalculate(unit);
-                    return evaluator.Evaluate(toEvaluate, unit) * evaluator.Weight;
-                }));
+                evaluator.PreCalculate(unit);
+                return evaluator.Evaluate(toEvaluate, unit) * evaluator.Weight;
+            });
+
+            if (UnitScoreDict.ContainsKey(toEvaluate))
+            {
+                UnitScoreDict[toEvaluate] = score;
             }
             else
             {
-                UnitScoreDict.Add(toEvaluate, 0);
+                UnitScoreDict.Add(toEvaluate, score);
             }
         }
 
         public void EvaluateCell(Cell toEvaluate)
         {
-            if (CellEvaluators.Any())
+            var score = !CellEvaluators.Any() ? 0 : CellEvaluators.Sum(evaluator =>
             {
-                CellScoreDict.Add(toEvaluate, CellEvaluators.Sum(evaluator =>
-                {
-                    evaluator.PreCalculate(unit);
-                    return evaluator.Evaluate(toEvaluate, unit) * evaluator.Weight;
-                }));
+                evaluator.PreCalculate(unit);
+                return evaluator.Evaluate(toEvaluate, unit) * evaluator.Weight;
+            });
+            if(CellScoreDict.ContainsKey(toEvaluate))
+            {
+                CellScoreDict[toEvaluate] = score;
             }
             else
             {
-                CellScoreDict.Add(toEvaluate, 0);
+                CellScoreDict.Add(toEvaluate, score);
+            }
+        }
+
+        /// <summary>
+        /// 评估周围一圈Cell 默认为单位可移动范围
+        /// </summary>
+        public void EvaluateNeighborCells()
+        {
+            var cells = unit.Cell.GetNeighborCells(unit.Mov);
+            foreach (var cell in cells)
+            {
+                EvaluateCell(cell);
             }
         }
 
@@ -95,7 +110,7 @@ namespace SrpgFramework.Units.Units
         {
             EvaluateUnits();
             EvaluateCells();
-            var brainList = MoveBrains.Concat(ActionBrains).ToHashSet();
+            var brainList = MoveBrains.Concat(ActionBrains);
             var brains = brainList.Where(brain => brain.ShouldExecute(unit, unit.Cell));
 
             while (brains.Any())

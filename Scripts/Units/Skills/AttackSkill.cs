@@ -21,6 +21,8 @@ namespace SrpgFramework.Units.Skills
 
         public override IEnumerator Act(Unit unit)
         {
+            unit.ActionPoints--;
+            Debug.Log("Attack");
             //UnitToAttack.Hp--;
             yield return null;
         }
@@ -108,6 +110,16 @@ namespace SrpgFramework.Units.Skills
         private float expectDamage(Unit self, Unit target)
         {
             return 1;
+        }
+
+        public override IEnumerator AIExecute(Unit unit)
+        {
+            yield return Execute(unit, () => { }, () =>
+            {
+                if (UnitToAttack.gameObject.activeSelf)
+                    unit.Ai.EvaluateUnit(UnitToAttack);     //只更新受影响单位以及可移动区域评分
+                unit.Ai.EvaluateNeighborCells();
+            });
         }
     }
 }

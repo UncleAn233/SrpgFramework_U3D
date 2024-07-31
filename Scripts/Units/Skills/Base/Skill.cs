@@ -34,7 +34,11 @@ namespace SrpgFramework.Units.Skills
         }
         public virtual IEnumerator AIExecute(Unit unit)
         {
-            yield return Execute(unit, () => { }, () => { unit.Ai.EvaluateUnits(); });
+            yield return Execute(unit, () => { }, () =>
+            {
+                unit.Ai.EvaluateUnits();
+                unit.Ai.EvaluateNeighborCells();
+            });
         }
 
         public virtual void Enter(Unit self) { }

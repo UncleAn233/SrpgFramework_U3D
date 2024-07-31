@@ -63,6 +63,8 @@ namespace SrpgFramework.Units.Units
             BattleManager.UnitMgr.Units.Add(this);
             ActionPoints = 1;
             TotalActionPoints = 1;
+
+            this.OnTurnEnd += (t) => { ActionPoints = TotalActionPoints; };
         }
 
         public void SetPos(Cell cell)
