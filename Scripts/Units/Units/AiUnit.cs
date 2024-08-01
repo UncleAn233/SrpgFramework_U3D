@@ -1,4 +1,4 @@
-using SrpgFramework.Units.Skills;
+using SrpgFramework.Units.Commands;
 using SrpgFramework.Ai.Evaluators;
 using SrpgFramework.CellGrid.Cells;
 using SrpgFramework.Global;
@@ -15,8 +15,8 @@ namespace SrpgFramework.Units.Units
         public Dictionary<Unit, float> UnitScoreDict { get; private set; } = new();
         public Dictionary<Cell, float> CellScoreDict { get; private set; } = new();
 
-        public HashSet<Skill> MoveBrains { get; private set; } = new();
-        public HashSet<Skill> ActionBrains { get; private set; } = new();
+        public HashSet<Command> MoveBrains { get; private set; } = new();
+        public HashSet<Command> ActionBrains { get; private set; } = new();
 
         public List<Evaluator<Unit>> UnitEvaluators = new();
         public List<Evaluator<Cell>> CellEvaluators = new();
@@ -24,8 +24,8 @@ namespace SrpgFramework.Units.Units
         private void Awake()
         {
             unit = GetComponent<Unit>();
-            MoveBrains.Add(new MoveSkill());
-            ActionBrains.Add(new AttackSkill());
+            MoveBrains.Add(new MoveCommand());
+            ActionBrains.Add(new AttackCommand());
         }
 
         private void Start()

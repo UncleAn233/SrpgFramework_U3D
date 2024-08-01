@@ -6,9 +6,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SrpgFramework.Units.Skills
+namespace SrpgFramework.Units.Commands
 {
-    public class MoveSkill : Skill
+    public class MoveCommand : Command
     {
         public Cell Destination { get; set; }   //目的地
         private IList<Cell> path;   //路径

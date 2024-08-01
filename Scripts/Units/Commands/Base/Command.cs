@@ -5,9 +5,12 @@ using SrpgFramework.Units.Units;
 using System;
 using System.Collections;
 
-namespace SrpgFramework.Units.Skills
+namespace SrpgFramework.Units.Commands
 {
-    public abstract class Skill : ICellGridState
+    /// <summary>
+    /// 指示单位动作 例如移动 攻击 使用道具等，技能是一类特殊的Command
+    /// </summary>
+    public abstract class Command : ICellGridState
     {
         public virtual IEnumerator Act(Unit unit) { yield return null; }
 
@@ -53,7 +56,7 @@ namespace SrpgFramework.Units.Skills
 
         public bool ShouldExecute(Unit unit) { return ShouldExecute(unit, unit.Cell); }
         /// <summary>
-        /// 判断AI是否可以使用该Skill 同时包含一些前置处理
+        /// 判断AI是否可以使用该Command 同时包含一些前置处理
         /// </summary>
         /// <param name="self">使用单位</param>
         /// <param name="cell">假设单位所处的Cell</param>

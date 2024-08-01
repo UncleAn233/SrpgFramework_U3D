@@ -1,4 +1,4 @@
-using SrpgFramework.Units.Skills;
+using SrpgFramework.Units.Commands;
 using SrpgFramework.CellGrid;
 using SrpgFramework.Level;
 using SrpgFramework.Players;
@@ -15,7 +15,7 @@ namespace SrpgFramework.Global
         public static LevelManager LevelMgr { get; private set; }
         public static CellGridManager CellGridMgr { get; private set; }
         public static UnitManager UnitMgr { get; private set; }
-        public static SkillManager SkillMgr { get; private set; }
+        public static CommandManager CommandMgr { get; private set; }
         public static PlayerManager PlayerMgr { get; private set; }
         
         private void Awake()
@@ -32,7 +32,7 @@ namespace SrpgFramework.Global
             LevelMgr = gameObject.AddComponent<LevelManager>();
             CellGridMgr = gameObject.AddComponent<CellGridManager>();
             UnitMgr = gameObject.AddComponent<UnitManager>();
-            SkillMgr = gameObject.AddComponent<SkillManager>();
+            CommandMgr = gameObject.AddComponent<CommandManager>();
             PlayerMgr = gameObject.AddComponent<PlayerManager>();
         }
     }

@@ -6,9 +6,9 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace SrpgFramework.Units.Skills
+namespace SrpgFramework.Units.Commands
 {
-    public class AttackSkill : Skill
+    public class AttackCommand : Command
     {
         public string[] DamageTags;
         public Unit UnitToAttack { get; set; }

@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using SrpgFramework.Units.Skills;
+using SrpgFramework.Units.Commands;
 using System;
 using System.Collections.Generic;
 
@@ -14,7 +14,7 @@ namespace SrpgFramework.Units.Units
         public string Spine;
 
         public UnitDataAttribute Attribute; //属性数值
-        public List<Skill> Skill;   //能力相关
+        public List<Command> Command;   //能力相关
     }
 
     public class UnitDataConverter : JsonConverter
